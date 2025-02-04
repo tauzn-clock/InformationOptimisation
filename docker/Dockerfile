@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install matplotlib tqdm tensorboardX timm mmcv open3d xformers transformers mmcv-full ipykernel
+RUN pip3 install matplotlib tqdm open3d pillow numpy ipykernel opencv-python
 
 RUN git clone --recurse-submodules https://github.com/tauzn-clock/InformationOptimisation
 RUN cd /InformationOptimisation/segment-anything && pip3 install -e .
