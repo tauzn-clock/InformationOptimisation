@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 def mask_to_hsv(mask):
     def hsv_colors(n):
@@ -63,3 +64,10 @@ def mask_to_hsv(mask):
                 img[i, j] = [0, 0, 0]
 
     return img
+
+def mask_over_img(img, mask, path):
+    fig, ax = plt.subplots()
+    ax.imshow(img)
+    ax.imshow(mask_to_hsv(mask), alpha=0.5)
+    ax.axis('off')
+    plt.savefig(path, bbox_inches='tight', pad_inches=0)

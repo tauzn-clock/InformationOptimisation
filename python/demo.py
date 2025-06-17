@@ -5,6 +5,7 @@ import os
 
 from information_estimation import information_estimation
 from utils.process_depth import get_3d
+
 # Open yaml
 import yaml
 
@@ -19,7 +20,7 @@ EPSILON = config["resolution"]  # Resolution of the sensor
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_DIR = "/scratchdata/nyu_plane"
-INDEX = 10
+INDEX = 0
 
 rgb = Image.open(os.path.join(DATA_DIR, "rgb", f"{INDEX}.png")).convert("RGB")
 rgb = np.array(rgb)
@@ -34,12 +35,13 @@ TARGET_FOLDER = "sam"
 
 SIGMA_RATIO = 0.01
 SIGMA = SIGMA_RATIO * depth
+SIGMA = SIGMA.flatten()
 
 CONFIDENCE = 0.99
 INLIER_RATIO= 0.1
-MAX_PLANE = 9
+MAX_PLANE = 8
 
-USE_SAM = False
+USE_SAM = True
 
 SAM_CONFIDENCE = 0.99
 SAM_INLIER_RATIO = 0.2
@@ -48,7 +50,7 @@ SAM_MAX_PLANE = 4
 POST_PROCESSING = False
 
 global_mask = np.zeros_like(depth, dtype=np.int32).flatten()
-global_planes = []
+global_planes = np.array([], dtype=np.float32).reshape(0, 4)
 
 # Use SAM to partition the image
 if USE_SAM: 
@@ -63,12 +65,21 @@ if USE_SAM:
     print("SAM of Regions:", len(sam_masks))
     masks = sorted(sam_masks, key=lambda x: x["stability_score"])
 
+    for sam_i, sam_mask in enumerate(sam_masks):
+        valid_mask = sam_mask["segmentation"] & (depth > 0)
+        valid_mask = valid_mask.flatten()
+
+        mask, plane = information_estimation(pts_3d, R, EPSILON, SIGMA, SAM_CONFIDENCE, SAM_INLIER_RATIO, SAM_MAX_PLANE, valid_mask=valid_mask, verbose=False)
+
+        if len(plane) > 0:
+            global_mask = np.where(mask > 0, mask+global_mask.max(), global_mask)
+            global_planes = np.vstack((global_planes, plane))
 
 valid_mask = (global_mask == 0) & (depth > 0).flatten()
-mask, plane = information_estimation(pts_3d, R, EPSILON, SIGMA.flatten(), CONFIDENCE, INLIER_RATIO, MAX_PLANE, valid_mask=valid_mask, verbose=True)
+mask, plane = information_estimation(pts_3d, R, EPSILON, SIGMA, CONFIDENCE, INLIER_RATIO, MAX_PLANE, valid_mask=valid_mask, verbose=True)
 
-print(mask.max())
 global_mask = np.where(mask > 0, mask+global_mask.max(), global_mask)
-print(global_mask.max())
-global_planes.append(plane)
-print(global_planes)
+global_planes = np.vstack((global_planes, plane))
+
+from utils.mask_to_hsv import mask_over_img
+mask_over_img(rgb, global_mask.reshape(depth.shape), "test.png")
