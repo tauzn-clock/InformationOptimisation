@@ -25,9 +25,21 @@ int main(int argc, char** argv) {
 
         int H = depth.rows;
         int W = depth.cols;
-        std::vector<int> plane_mask(H*W, 1);
+        std::vector<int> mask(H*W, 1);
 
-        int plane = information_optimisation(depth, config, 10, plane_mask);
+        int plane_cnt = information_optimisation(depth, config, 10, mask);
+        std::cout << "Plane count: " << plane_cnt << std::endl;
+
+        cv::Mat plane_mask = cv::Mat::zeros(depth.rows, depth.cols, CV_16UC1);
+        for (int i=0; i<plane_mask.rows; i++){
+            for (int j=0; j<plane_mask.cols; j++){
+                if (mask[i*plane_mask.cols+j] > 0 && mask[i*plane_mask.cols+j] <= plane_cnt) {
+                    plane_mask.at<unsigned short>(i, j) = mask[i*plane_mask.cols+j];
+                } else {
+                    plane_mask.at<unsigned short>(i, j) = 0;
+                }
+            }
+        }
 
         cv::imwrite(config["file_path"].as<std::string>() + "/our/" +std::to_string(i)+".png", plane_mask);
     }
