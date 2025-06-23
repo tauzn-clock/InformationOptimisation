@@ -50,9 +50,9 @@ int information_optimisation(cv::Mat depth, YAML::Node config, int max_plane, ve
     float fy = config["camera_params"]["fy"].as<float>();
     float cx = config["camera_params"]["cx"].as<float>();
     float cy = config["camera_params"]["cy"].as<float>();
-    float scale = config["scale"].as<float>();
+    float resolution = config["resolution"].as<float>();
 
-    float R = config["R"].as<float>();
+    float R = config["depth_max"].as<float>();
     float eps = config["eps"].as<float>();
     float STATES = log(R/eps);
 
@@ -81,9 +81,9 @@ int information_optimisation(cv::Mat depth, YAML::Node config, int max_plane, ve
 
     for(int i = 0; i < H; i++) {
         for(int j = 0; j < W; j++) {
-            points[i*W + j][0] = (j - cx) * depth.at<unsigned short>(i, j) / fx / scale;
-            points[i*W + j][1] = (i - cy) * depth.at<unsigned short>(i, j) / fy / scale;
-            points[i*W + j][2] = depth.at<unsigned short>(i, j) / scale;
+            points[i*W + j][0] = (j - cx) * depth.at<unsigned short>(i, j) / fx * resolution;
+            points[i*W + j][1] = (i - cy) * depth.at<unsigned short>(i, j) / fy * resolution;
+            points[i*W + j][2] = depth.at<unsigned short>(i, j) * resolution;
 
             float norm = sqrt(points[i*W + j][0] * points[i*W + j][0] + points[i*W + j][1] * points[i*W + j][1] + points[i*W + j][2] * points[i*W + j][2]) + 1e-10;
             direction_vector[i*W + j][0] = points[i*W + j][0] / norm;
@@ -91,7 +91,7 @@ int information_optimisation(cv::Mat depth, YAML::Node config, int max_plane, ve
             direction_vector[i*W + j][2] = points[i*W + j][2] / norm;
 
             //Sigma function
-            sigma[i*W + j] = 0.01 * depth.at<unsigned short>(i, j) / scale;
+            sigma[i*W + j] = 0.01 * depth.at<unsigned short>(i, j) * resolution;
             log_sigma[i*W + j] = log(sigma[i*W + j]) - log(eps) + 0.5 * log(2 * 3.14159) - STATES;
 
             if (depth.at<unsigned short>(i, j) == 0 || input_mask[i*W + j]==0) {

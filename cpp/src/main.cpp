@@ -23,42 +23,12 @@ int main(int argc, char** argv) {
         cv::Mat img = cv::imread(rgb_path, cv::IMREAD_COLOR);
         cv::Mat depth = cv::imread(depth_path, cv::IMREAD_UNCHANGED);
 
-        cv::Mat seg_mask;
-        int n_labels = get_rgb_regions(img, config, seg_mask);
+        int H = depth.rows;
+        int W = depth.cols;
+        std::vector<int> plane_mask(H*W, 1);
 
-        cv::Mat plane_mask = cv::Mat::zeros(depth.rows, depth.cols, CV_16UC1);
-        unsigned short plane_cnt = 0;
+        int plane = information_optimisation(depth, config, 10, plane_mask);
 
-        for (int l = 1; l < n_labels; l++) {
-            int cnt = 0;
-            std::vector<int> mask(depth.rows * depth.cols);
-            for (int i = 0; i < depth.rows; i++) {
-                for (int j = 0; j < depth.cols; j++) {
-                    if (seg_mask.at<int>(i, j) == l) {
-                        mask[i * depth.cols + j] = 1;
-                        cnt++;
-                    } 
-                    else {
-                        mask[i * depth.cols + j] = 0;
-                    }
-                }
-            }
-            std::cout<<cnt<<std::endl;
-
-            int max_plane = information_optimisation(depth, config, 8, mask);
-
-            for (int i=0; i<plane_mask.rows; i++){
-                for (int j=0; j<plane_mask.cols; j++){
-                    if (mask[i*plane_mask.cols+j] > 0 && mask[i*plane_mask.cols+j] <= max_plane){
-                        plane_mask.at<unsigned short>(i,j) = (unsigned short) (plane_cnt + mask[i*plane_mask.cols+j]);
-                    }
-                }
-            }
-            
-            plane_cnt += max_plane;
-        }
-
-        //plane_mask.convertTo(plane_mask, CV_8UC1);
         cv::imwrite(config["file_path"].as<std::string>() + "/our/" +std::to_string(i)+".png", plane_mask);
     }
 
