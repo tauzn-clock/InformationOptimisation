@@ -13,8 +13,8 @@ edge_detection_params:
     low_threshold: 100
     high_threshold: 400
 
-scale: 1000
-R: 10
+depth_max : 10.0
+resolution : 0.001
 eps: 0.001
 conf: 0.99
 inlier_th: 0.1

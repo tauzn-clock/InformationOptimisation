@@ -15,7 +15,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 with open("nyu.yaml", "r") as file:
     config = yaml.safe_load(file)
 
-INTRINSICS = [config["fx"], config["fy"], config["cx"], config["cy"]]
+INTRINSICS = [config["camera_params"]["fx"], config["camera_params"]["fy"], config["camera_params"]["cx"], config["camera_params"]["cy"]]
 R = config["depth_max"]  # Maximum range of sensor
 EPSILON = config["resolution"]  # Resolution of the sensor
 
