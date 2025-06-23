@@ -35,10 +35,11 @@ pts_3d = get_3d(depth, INTRINSICS)
 TARGET_FOLDER = "mask"
 
 SIGMA_RATIO = 0.01
-SIGMA = SIGMA_RATIO * depth
+SIGMA = SIGMA_RATIO * depth # Proportional noise model
+#SIGMA = 0.0012 + 0.0019 * (depth - 0.4)**2 # Empirical noise model
 SIGMA = SIGMA.flatten()
 
-CONFIDENCE = 0.99
+CONFIDENCE = 0.99##
 INLIER_RATIO= 0.1
 MAX_PLANE = 8
 
