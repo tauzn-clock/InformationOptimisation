@@ -2,13 +2,16 @@ import torch
 import numpy as np
 from PIL import Image
 import os
+import csv
+import yaml
 
 from information_estimation import information_estimation
 from utils.process_depth import get_3d
 
-# Open yaml
-import yaml
 
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Open yaml
 with open("nyu.yaml", "r") as file:
     config = yaml.safe_load(file)
 
@@ -17,21 +20,19 @@ R = config["depth_max"]  # Maximum range of sensor
 EPSILON = config["resolution"]  # Resolution of the sensor
 
 # Image dir
-
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_DIR = "/scratchdata/nyu_plane"
 INDEX = 0
 
 rgb = Image.open(os.path.join(DATA_DIR, "rgb", f"{INDEX}.png")).convert("RGB")
 rgb = np.array(rgb)
 
-depth = Image.open(os.path.join(DATA_DIR, "depth", f"{INDEX}.png")).convert("I")
+depth = Image.open(os.path.join(DATA_DIR, "depth", f"{INDEX}.png")).convert("I;16")
 depth = np.array(depth) * EPSILON
 
 pts_3d = get_3d(depth, INTRINSICS)
-# Tuning parameters
 
-TARGET_FOLDER = "sam"
+# Tuning parameters
+TARGET_FOLDER = "mask"
 
 SIGMA_RATIO = 0.01
 SIGMA = SIGMA_RATIO * depth
@@ -49,7 +50,7 @@ SAM_MAX_PLANE = 4
 
 POST_PROCESSING = False
 
-global_mask = np.zeros_like(depth, dtype=np.int32).flatten()
+global_mask = np.zeros_like(depth, dtype=np.uint8).flatten()
 global_planes = np.array([], dtype=np.float32).reshape(0, 4)
 
 # Use SAM to partition the image
@@ -81,5 +82,12 @@ mask, plane = information_estimation(pts_3d, R, EPSILON, SIGMA, CONFIDENCE, INLI
 global_mask = np.where(mask > 0, mask+global_mask.max(), global_mask)
 global_planes = np.vstack((global_planes, plane))
 
-from utils.mask_to_hsv import mask_over_img
-mask_over_img(rgb, global_mask.reshape(depth.shape), "test.png")
+global_mask = global_mask.reshape(depth.shape)
+
+mask_PIL = Image.fromarray(global_mask)
+mask_PIL.save(os.path.join(DATA_DIR, TARGET_FOLDER, f"{INDEX}.png"))
+
+# Save the plane
+with open(os.path.join(DATA_DIR, TARGET_FOLDER, f"{INDEX}.csv"), 'w') as f:
+    writer = csv.writer(f)
+    writer.writerows(global_planes)

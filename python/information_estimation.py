@@ -13,11 +13,9 @@ def information_estimation(PTS_3D, R, EPSILON, SIGMA, CONFIDENCE=0.99, INLIER_RA
     if valid_mask is not None: TOTAL_NO_PTS = valid_mask.sum()
     else: TOTAL_NO_PTS = N
 
-    mask = np.zeros(N, dtype=np.int32).flatten()
-
     if TOTAL_NO_PTS < 3:
         if verbose: print("Not enough points to fit a plane.")
-        return mask, []
+        return np.zeros(N, dtype=np.uint8).flatten(), []
     
     directional_vec = PTS_3D / (np.linalg.norm(PTS_3D, axis=1, keepdims=True) + 1e-16)
     
@@ -28,7 +26,7 @@ def information_estimation(PTS_3D, R, EPSILON, SIGMA, CONFIDENCE=0.99, INLIER_RA
     ITERATION = int(np.log(1 - CONFIDENCE) / np.log(1 - INLIER_RATIO**3))
 
     information = np.full(MAX_PLANE+1, np.inf, dtype=float)
-    mask = np.zeros(N, dtype=int)
+    mask = np.zeros(N, dtype=np.uint8)
     plane = np.zeros((MAX_PLANE+1, 4), dtype=float)
     availability_mask = np.ones(N, dtype=bool)
     if valid_mask is not None:
@@ -83,7 +81,7 @@ def information_estimation(PTS_3D, R, EPSILON, SIGMA, CONFIDENCE=0.99, INLIER_RA
                 #SVD to find normal and distance
                 inliers = PTS_3D[trial_mask]
                 normal, distance = fit_plane(inliers)
-                error = ((-distance/(np.dot(directional_vec, normal.T)+1e-7))*directional_vec[:,2] - Z) ** 2
+                error = ((-distance/(np.dot(directional_vec, normal.T)+1e-16))*directional_vec[:,2] - Z) ** 2
                 error = error / TWO_SIGMA_SQUARE + PER_POINT_INFO
                 trial_mask = error < 0
                 trial_mask = trial_mask & availability_mask
