@@ -1,0 +1,20 @@
+file_path: /scratchdata/processed/alcove2
+camera_params:
+  fx: 306.93469
+  fy: 318.588
+  cx: 306.890
+  cy: 198.379
+
+edge_detection_params:
+  guassian_blur:
+    kernel_size: 5
+    sigma: 1.0
+  canny:
+    low_threshold: 100
+    high_threshold: 400
+
+scale: 1000
+R: 10
+eps: 0.001
+conf: 0.99
+inlier_th: 0.1
