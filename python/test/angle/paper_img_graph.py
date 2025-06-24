@@ -1,3 +1,4 @@
+import os
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,11 +9,13 @@ font = {'size'   : 14}
 
 matplotlib.rc('font', **font)
 
-with open("/HighResMDE/get_planes/ransac/paper_imgs/2.csv", mode='r') as file:
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
+
+with open(os.path.join(CUR_DIR, "2.csv"), mode='r') as file:
     data2 = list(csv.reader(file))
-with open("/HighResMDE/get_planes/ransac/paper_imgs/5.csv", mode='r') as file:
+with open(os.path.join(CUR_DIR, "5.csv"), mode='r') as file:
     data5 = list(csv.reader(file))
-with open("/HighResMDE/get_planes/ransac/paper_imgs/10.csv", mode='r') as file:
+with open(os.path.join(CUR_DIR, "10.csv"), mode='r') as file:
     data10 = list(csv.reader(file))
 
 data2 = np.array(data2, dtype=np.float32)
@@ -64,7 +67,7 @@ ax2.legend(loc='upper right',fontsize=10)
 #labs = [l.get_label() for l in lns]
 #ax.legend(lns, labs, loc=0)
 plt.tight_layout()
-plt.savefig("/HighResMDE/get_planes/ransac/paper_imgs/open3d_graph.png", bbox_inches='tight', pad_inches=0, transparent=True)
+plt.savefig(os.path.join(CUR_DIR, "open3d_graph.png"), bbox_inches='tight', pad_inches=0, transparent=True)
 
 fig, ax = plt.subplots(figsize=(9, 5))
 ax.grid(True)
@@ -93,5 +96,5 @@ ax2.legend(loc='upper right',fontsize=10)
 #labs = [l.get_label() for l in lns]
 #ax.legend(lns, labs, loc=0)
 plt.tight_layout()
-plt.savefig("/HighResMDE/get_planes/ransac/paper_imgs/ours_graph.png", bbox_inches='tight', pad_inches=0, transparent=True)
+plt.savefig(os.path.join(CUR_DIR, "ours_graph.png"), bbox_inches='tight', pad_inches=0, transparent=True)
 plt.show()
