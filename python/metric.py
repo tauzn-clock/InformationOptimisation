@@ -135,37 +135,38 @@ def evaluateMasks(predSegmentations, gtSegmentations, device, printInfo=False):
     return info
 
 if __name__ == "__main__":
-    ROOT = "/scratchdata/nyu_plane"
-    FOLDER = "new_gt_sigma_1"
-    SIGMA_RATIO = 0.01
-    data_csv = "/HighResMDE/get_planes/ransac/config/nyu.csv"
+    from utils.process_depth import get_3d
 
-    with open(data_csv, 'r') as f:
-        reader = csv.reader(f)
-        DATA = list(reader)
+    DATA_DIR = "/scratchdata/nyu_plane"
+    GT = "original_gt"
+    PRED = "mask_experimental"
+
+    # Open yaml
+    import yaml
+    with open("nyu.yaml", "r") as file:
+        config = yaml.safe_load(file)
+
+    INTRINSICS = [config["camera_params"]["fx"], config["camera_params"]["fy"], config["camera_params"]["cx"], config["camera_params"]["cy"]]
+    R = config["depth_max"]  # Maximum range of sensor
+    EPSILON = config["resolution"]  # Resolution of the sensor
 
     avg = []
 
-    for frame_cnt in range(0,len(DATA)):
-        data = DATA[frame_cnt]
-        INTRINSICS = np.array([float(data[2]), 0, float(data[4]), 0, 0, float(data[3]), float(data[5]), 0]) # fx, fy, cx, cy
-
-        EPSILON = 1/float(data[6]) # Resolution
-        R = float(data[7]) # Maximum Range
-
-        depth = np.array(Image.open(os.path.join(ROOT, data[1])))/float(data[6])
+    for frame_cnt in range(0,1449):
+        depth = np.array(Image.open(f"{DATA_DIR}/depth/{frame_cnt}.png")) * EPSILON
         H, W = depth.shape
 
-        points, index = depth_to_pcd(depth, INTRINSICS)
-        SIGMA = SIGMA_RATIO * points[:,2]
+        points = get_3d(depth, INTRINSICS)
+        #SIGMA = 0.01 * points[:,2]
+        SIGMA = 0.0012 + 0.0019 * (points[:,2] - 0.4)**2
 
-        pred = np.array(Image.open(f"{ROOT}/{FOLDER}/{frame_cnt}.png")).flatten()
-        gt = np.array(Image.open(f"{ROOT}/original_gt/{frame_cnt}.png")).flatten()
-        with open(f"{ROOT}/{FOLDER}/{frame_cnt}.csv", 'r') as f:
+        gt = np.array(Image.open(f"{DATA_DIR}/{GT}/{frame_cnt}.png")).flatten()
+        pred = np.array(Image.open(f"{DATA_DIR}/{PRED}/{frame_cnt}.png")).flatten()
+        with open(f"{DATA_DIR}/{PRED}/{frame_cnt}.csv", 'r') as f:
             reader = csv.reader(f)
             csv_data = np.array(list(reader), dtype=np.float32)
 
-        pred, csv_data = plane_ordering(points, pred, csv_data, R, EPSILON, SIGMA,keep_index=gt.max(),merge_planes=True)
+        pred, csv_data = plane_ordering(points, pred, csv_data, R, EPSILON, SIGMA, keep_index=gt.max(), merge_planes=True)
 
         valid_mask = depth[45:471, 41:601].flatten() > 0
         H,W = depth.shape
