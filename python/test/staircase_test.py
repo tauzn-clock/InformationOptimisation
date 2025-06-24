@@ -7,7 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from set_depth import set_depth
 from utils.open3d_ransac import open3d_ransac
-
+from utils.visualise import img_over_pcd, mask_to_hsv
+from utils.process_depth import get_3d
 np.random.seed(0)
 
 SAVE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "staircase")
@@ -51,9 +52,13 @@ depth = np.array(depth/EPSILON,dtype=int) * EPSILON
 
 print(depth.max(), depth.min())
 
+pcd = get_3d(depth, INTRINSICS)
+
 plt.imsave(f"{SAVE_DIR}/staircase.png",depth,cmap='gray')
 
 mask, planes = open3d_ransac(depth, INTRINSICS, EPSILON * NOISE_LEVEL, CONFIDENCE, INLIER_THRESHOLD, MAX_PLANE, verbose=True)
+
+img_over_pcd(pcd, mask_to_hsv(mask), filepath=f"{SAVE_DIR}/{NOISE_LEVEL}_default_pcd_stair.png")
 
 R = depth.max() - depth.min()
 print(R)
