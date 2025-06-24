@@ -6,6 +6,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np
 import matplotlib.pyplot as plt
 from set_depth import set_depth
+from information_estimation import information_estimation
+from metric import plane_ordering
 from utils.open3d_ransac import open3d_ransac
 from utils.visualise import img_over_pcd, mask_to_hsv
 from utils.process_depth import get_3d
@@ -62,6 +64,8 @@ img_over_pcd(pcd, mask_to_hsv(mask), filepath=f"{SAVE_DIR}/{NOISE_LEVEL}_default
 
 R = depth.max() - depth.min()
 print(R)
-information, mask, planes = plane_ransac(depth, INTRINSICS, R, EPSILON, SIGMA, CONFIDENCE, INLIER_THRESHOLD, MAX_PLANE, verbose=True)
-print(information)
-print(planes)
+mask, plane = information_estimation(pcd, R, EPSILON, SIGMA, CONFIDENCE, INLIER_THRESHOLD, MAX_PLANE, verbose=True)
+mask, planes = plane_ordering(pcd, mask, planes, R, EPSILON, SIGMA, keep_index=mask.max())
+print(mask.max())
+
+img_over_pcd(pcd, mask_to_hsv(mask.reshape(depth.shape)), filepath=f"{SAVE_DIR}/{NOISE_LEVEL}_our_pcd_stair.png")
