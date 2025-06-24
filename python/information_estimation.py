@@ -126,3 +126,81 @@ def fit_plane(points):
     D = -np.dot(normal_vector, centroid)
     
     return normal_vector, D
+
+"""
+Information optimisation without ray tracing
+def default_ransac(POINTS, R, EPSILON, SIGMA, CONFIDENCE=0.99, INLIER_THRESHOLD=0.01, MAX_PLANE=1, valid_mask=None, verbose=False):
+    assert(POINTS.shape[1] == 3)
+    assert(MAX_PLANE > 0), "MAX_PLANE must be greater than 0"
+    N = POINTS.shape[0]
+    if valid_mask is not None: TOTAL_NO_PTS = valid_mask.sum()
+    else: TOTAL_NO_PTS = POINTS.shape[0]
+    SPACE_STATES = np.log(R/EPSILON)
+    PER_POINT_INFO = 0.5 * np.log(2*np.pi) + np.log(SIGMA/EPSILON) - SPACE_STATES
+
+    ITERATION = int(np.log(1 - CONFIDENCE) / np.log(1 - (INLIER_THRESHOLD)**3))
+
+    information = np.full(MAX_PLANE+1, np.inf, dtype=float)
+    mask = np.zeros(N, dtype=int)
+    plane = np.zeros((MAX_PLANE+1, 4), dtype=float)
+    availability_mask = np.ones(N, dtype=bool)
+    if valid_mask is not None:
+        availability_mask = valid_mask
+    
+    # O
+    information[0] = TOTAL_NO_PTS * 3 * SPACE_STATES
+
+    # nP + 0
+    for plane_cnt in range(1, MAX_PLANE+1):
+        #BEST_INLIERS_CNT = 0
+        BEST_INLIERS_MASK = np.zeros(N, dtype=bool)
+        BEST_ERROR = 0
+        BEST_PLANE = np.zeros(4, dtype=float)
+
+        available_index = np.linspace(0, N-1, N, dtype=int)
+        available_index = np.where(availability_mask)[0]
+
+        information[plane_cnt] =  information[plane_cnt-1]
+        information[plane_cnt] -= TOTAL_NO_PTS * np.log(plane_cnt) # Remove previous mask 
+        information[plane_cnt] += TOTAL_NO_PTS * np.log(plane_cnt+1) # New Mask that classify points
+        information[plane_cnt] += 3 * SPACE_STATES # New Plane
+
+        if (availability_mask).sum() < 3:
+            break
+
+        for _ in tqdm(range(ITERATION), disable=not verbose):
+            # Get 3 random points
+            idx = np.random.choice(available_index, 3, replace=False)
+
+            # Get the normal vector and distance
+            A = POINTS[idx[0]]
+            B = POINTS[idx[1]]
+            C = POINTS[idx[2]]
+
+            AB = B - A
+            AC = C - A
+            normal = np.cross(AB, AC)
+            normal = normal / (np.linalg.norm(normal) + 1e-7)
+            distance = -np.dot(normal, A)
+
+            # Count the number of inliers
+            error = np.abs(np.dot(POINTS, normal.T)+distance) 
+            error = 0.5 * error**2 / SIGMA**2 + PER_POINT_INFO
+            trial_mask = error < 0
+            trial_mask = trial_mask & availability_mask
+            trial_error = error[trial_mask].sum()
+
+            if BEST_ERROR > trial_error:
+                #BEST_INLIERS_CNT = trial_cnt
+                BEST_INLIERS_MASK = trial_mask
+                BEST_PLANE = np.concatenate((normal, [distance]))
+                BEST_ERROR = trial_error
+        
+        information[plane_cnt] += BEST_ERROR
+        mask[BEST_INLIERS_MASK] = plane_cnt
+        plane[plane_cnt] = BEST_PLANE
+
+        availability_mask[BEST_INLIERS_MASK] = 0
+    
+    return information, mask, plane
+"""
