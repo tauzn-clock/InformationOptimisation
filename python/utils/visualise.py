@@ -118,4 +118,4 @@ def img_over_pcd(points, img, filepath=None):
         
         plt.imsave(filepath, output)
     else:
-        o3d.visualization.draw_geometries([point_cloud])
+        return point_cloud
