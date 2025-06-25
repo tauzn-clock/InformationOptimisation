@@ -4,7 +4,7 @@ import time
 
 from utils.process_depth import get_3d
 
-def information_estimation(PTS_3D, R, EPSILON, SIGMA, CONFIDENCE=0.99, INLIER_RATIO=0.01, MAX_PLANE=1, valid_mask=None, verbose=False):
+def information_estimation(PTS_3D, R, EPSILON, SIGMA, CONFIDENCE=0.99, INLIER_RATIO=0.01, MAX_PLANE=1, valid_mask=None, normal_remap=None, verbose=False):
     Z = PTS_3D[:, 2]
     
     assert(MAX_PLANE > 0), "MAX_PLANE must be greater than 0"
@@ -98,6 +98,40 @@ def information_estimation(PTS_3D, R, EPSILON, SIGMA, CONFIDENCE=0.99, INLIER_RA
         plane[plane_cnt] = BEST_PLANE
 
         availability_mask[BEST_INLIERS_MASK] = 0
+
+    if normal_remap is not None:
+        pts_normal = normal_remap
+        pts_normal = pts_normal.reshape(-1, 3)
+
+        DIRECTION_VECTOR = PTS_3D / (np.linalg.norm(PTS_3D, axis=1)[:, None]+1e-7)
+
+        distance = plane[1:,3]
+        normal = plane[1:,:3]
+
+        error = ((-distance/(np.dot(DIRECTION_VECTOR, normal.T)+1e-7))*DIRECTION_VECTOR[:,2, None] - Z[:,None]) ** 2
+        error = error / TWO_SIGMA_SQUARE[:,None] + PER_POINT_INFO[:,None]
+
+        new_mask = np.argmin(error, axis=1) + 1
+        new_mask = new_mask * (mask > 0)
+
+        pts_normal = pts_normal.reshape(-1, 3)
+        normal_error = np.abs(np.dot(pts_normal, normal.T))
+        normal_error[error > 0] = - np.inf
+        new_mask = np.argmax(normal_error, axis=1) + 1
+        new_mask = new_mask * (mask > 0)
+
+        new_information = np.zeros_like(information)
+        new_information[0] = information[0]
+        for plane_cnt in range(1, len(plane)):
+            new_information[plane_cnt] =  new_information[plane_cnt-1]
+            new_information[plane_cnt] -= TOTAL_NO_PTS * np.log(plane_cnt) # Remove previous mask 
+            new_information[plane_cnt] += TOTAL_NO_PTS * np.log(plane_cnt+1) # New Mask that classify points
+            new_information[plane_cnt] += 3 * SPACE_STATES # New Plane
+
+            new_information[plane_cnt] += error[new_mask == plane_cnt,plane_cnt-1].sum()
+        
+        information = new_information
+        mask = new_mask
 
     min_idx = np.argmin(information)
     if verbose: print("Min Planes: ", min_idx)
