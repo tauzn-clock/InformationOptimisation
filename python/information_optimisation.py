@@ -4,7 +4,7 @@ import time
 
 from utils.process_depth import get_3d
 
-def information_estimation(PTS_3D, R, EPSILON, SIGMA, CONFIDENCE=0.99, INLIER_RATIO=0.01, MAX_PLANE=1, valid_mask=None, normal_remap=None, verbose=False):
+def information_optimisation(PTS_3D, R, EPSILON, SIGMA, CONFIDENCE=0.99, INLIER_RATIO=0.01, MAX_PLANE=1, valid_mask=None, normal_remap=None, verbose=False):
     Z = PTS_3D[:, 2]
     
     assert(MAX_PLANE > 0), "MAX_PLANE must be greater than 0"

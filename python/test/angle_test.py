@@ -6,7 +6,7 @@ import sys
 sys.path.append("/HighResMDE/get_planes/ransac")
 
 import numpy as np
-from information_estimation import plane_ransac
+from information_optimisation import plane_ransac
 from visualise import visualise_mask, save_mask
 from synthetic_test import set_depth, open3d_find_planes
 from metrics import plane_ordering

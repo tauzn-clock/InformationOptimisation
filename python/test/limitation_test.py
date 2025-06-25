@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np
 import matplotlib.pyplot as plt
 from set_depth import set_depth
-from information_estimation import information_estimation
+from information_optimisation import information_optimisation
 from metric import plane_ordering
 from utils.open3d_ransac import open3d_ransac
 from utils.visualise import img_over_pcd, mask_to_hsv
@@ -57,13 +57,13 @@ plt.imsave(f"{SAVE_DIR}/limitation.png",depth,cmap='gray')
 R = depth.max() - depth.min()
 print(R)
 
-mask, plane = information_estimation(pcd, R, EPSILON, SIGMA, CONFIDENCE, INLIER_THRESHOLD, MAX_PLANE, verbose=True)
+mask, plane = information_optimisation(pcd, R, EPSILON, SIGMA, CONFIDENCE, INLIER_THRESHOLD, MAX_PLANE, verbose=True)
 print(mask.max())
 
 img_over_pcd(pcd, mask_to_hsv(mask.reshape(depth.shape)), filepath=f"{SAVE_DIR}/{SIGMA_PROP}_our_pcd_limitation.png")
 
 normal = get_normal_adj(depth, INTRINSICS)
-mask, plane = information_estimation(pcd, R, EPSILON, SIGMA, CONFIDENCE, INLIER_THRESHOLD, MAX_PLANE, verbose=True, normal_remap=normal)
+mask, plane = information_optimisation(pcd, R, EPSILON, SIGMA, CONFIDENCE, INLIER_THRESHOLD, MAX_PLANE, verbose=True, normal_remap=normal)
 print(mask.max())
 
 img_over_pcd(pcd, mask_to_hsv(mask.reshape(depth.shape)), filepath=f"{SAVE_DIR}/{SIGMA_PROP}_our_pcd_limitation_normal.png")
@@ -75,7 +75,7 @@ depth = np.array(depth/EPSILON,dtype=int) * EPSILON
 pcd = get_3d(depth, INTRINSICS)
 
 normal = get_normal_adj(depth, INTRINSICS)
-mask, plane = information_estimation(pcd, R, EPSILON, SIGMA, CONFIDENCE, INLIER_THRESHOLD, MAX_PLANE, verbose=True, normal_remap=normal)
+mask, plane = information_optimisation(pcd, R, EPSILON, SIGMA, CONFIDENCE, INLIER_THRESHOLD, MAX_PLANE, verbose=True, normal_remap=normal)
 print(mask.max())
 
 img_over_pcd(pcd, mask_to_hsv(mask.reshape(depth.shape)), filepath=f"{SAVE_DIR}/{SIGMA_PROP}_our_pcd_limitation_noise.png")

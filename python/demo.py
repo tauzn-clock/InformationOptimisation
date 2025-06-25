@@ -5,7 +5,7 @@ import os
 import csv
 import yaml
 
-from information_estimation import information_estimation
+from information_optimisation import information_optimisation
 from utils.process_depth import get_3d
 
 
@@ -71,14 +71,14 @@ if USE_SAM:
         valid_mask = sam_mask["segmentation"] & (depth > 0)
         valid_mask = valid_mask.flatten()
 
-        mask, plane = information_estimation(pts_3d, R, EPSILON, SIGMA, SAM_CONFIDENCE, SAM_INLIER_RATIO, SAM_MAX_PLANE, valid_mask=valid_mask, verbose=False)
+        mask, plane = information_optimisation(pts_3d, R, EPSILON, SIGMA, SAM_CONFIDENCE, SAM_INLIER_RATIO, SAM_MAX_PLANE, valid_mask=valid_mask, verbose=False)
 
         if len(plane) > 0:
             global_mask = np.where(mask > 0, mask+global_mask.max(), global_mask)
             global_planes = np.vstack((global_planes, plane))
 
 valid_mask = (global_mask == 0) & (depth > 0).flatten()
-mask, plane = information_estimation(pts_3d, R, EPSILON, SIGMA, CONFIDENCE, INLIER_RATIO, MAX_PLANE, valid_mask=valid_mask, verbose=True)
+mask, plane = information_optimisation(pts_3d, R, EPSILON, SIGMA, CONFIDENCE, INLIER_RATIO, MAX_PLANE, valid_mask=valid_mask, verbose=True)
 
 global_mask = np.where(mask > 0, mask+global_mask.max(), global_mask)
 global_planes = np.vstack((global_planes, plane))
