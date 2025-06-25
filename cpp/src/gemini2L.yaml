@@ -1,8 +1,8 @@
-file_path: /scratchdata/processed/alcove2
+file_path: /scratchdata/test
 camera_params:
   fx: 306.93469
-  fy: 318.588
-  cx: 306.890
+  cx: 318.588
+  fy: 306.890
   cy: 198.379
 
 edge_detection_params:
