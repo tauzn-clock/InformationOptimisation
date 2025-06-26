@@ -14,6 +14,10 @@ from utils.process_depth import get_3d
 np.random.seed(0)
 
 SAVE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "corner")
+# Create folder if it doesnt exist
+if not os.path.exists(SAVE_DIR):
+    os.makedirs(SAVE_DIR)
+
 print(f"Saving to {SAVE_DIR}")
 
 # Param
