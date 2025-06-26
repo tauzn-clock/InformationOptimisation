@@ -18,4 +18,5 @@ RUN git clone --recurse-submodules https://github.com/tauzn-clock/InformationOpt
 RUN cd /InformationOptimisation/segment-anything && pip3 install -e .
 WORKDIR /InformationOptimisation
 
+RUN git pull
 RUN pip3 install -r requirements.txt
