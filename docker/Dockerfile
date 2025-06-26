@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get install -y ffmpeg
+
 RUN pip3 install matplotlib tqdm open3d pillow numpy ipykernel opencv-python
 
 RUN git clone --recurse-submodules https://github.com/tauzn-clock/InformationOptimisation
