@@ -12,7 +12,7 @@ from utils.process_depth import get_3d
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Open yaml
-with open("nyu.yaml", "r") as file:
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "nyu.yaml"), "r") as file:
     config = yaml.safe_load(file)
 
 INTRINSICS = [config["camera_params"]["fx"], config["camera_params"]["fy"], config["camera_params"]["cx"], config["camera_params"]["cy"]]
