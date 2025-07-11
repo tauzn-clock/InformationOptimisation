@@ -25,7 +25,7 @@ Run the docker image using the following command:
 ```
 docker run  
     -it 
-    -v ~/scratchdata:/scratchdata 
+    -v <path_of_scratchdata>:/scratchdata 
     --gpus all 
     --shm-size 16g  
     -d  
