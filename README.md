@@ -9,6 +9,21 @@ TLDR: Given an depth image with known intrinsics, find an ordered list of planes
 
 ---
 ### Data Format
+
+```
+root_dir/
+├── rgb/
+│   ├── 0.png
+│   ├── 1.png
+│   └── ...
+├── depth/
+│   ├── 0.png
+│   ├── 1.png
+│   └── ...
+```
+
+Get the NYU dataset and all predicted planes from [here](https://drive.google.com/file/d/11PlNTvWpEvgwYDm7KMCCEbTTzira6-wV/view?usp=drive_link).
+
 ---
 ### Docker
 
