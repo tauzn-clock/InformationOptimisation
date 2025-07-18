@@ -20,16 +20,16 @@ R = config["depth_max"]  # Maximum range of sensor
 EPSILON = config["resolution"]  # Resolution of the sensor
 
 # Image dir
-DATA_DIR = "/scratchdata/nyu_plane"
+DATA_DIR = config["file_path"]
 
 # Tuning parameters
 TARGET_FOLDER = "mask"
 
-CONFIDENCE = 0.99##
-INLIER_RATIO= 0.1
-MAX_PLANE = 8
+CONFIDENCE =config["conf"]
+INLIER_RATIO= config["inlier_th"]
+MAX_PLANE = config["max_plane"]
 
-USE_SAM = True
+USE_SAM = config["use_sam"]
 
 if USE_SAM:
     from segment_anything import SamAutomaticMaskGenerator, sam_model_registry
@@ -37,13 +37,11 @@ if USE_SAM:
     sam = sam_model_registry["default"](checkpoint="/scratchdata/sam_vit_h_4b8939.pth").to(DEVICE)
     mask_generator = SamAutomaticMaskGenerator(sam, stability_score_thresh=0.98)
 
-SAM_CONFIDENCE = 0.99
-SAM_INLIER_RATIO = 0.2
-SAM_MAX_PLANE = 4
+SAM_CONFIDENCE = config["sam_conf"]
+SAM_INLIER_RATIO = config["sam_inlier_th"]
+SAM_MAX_PLANE = config["sam_max_plane"]
 
-POST_PROCESSING = False
-
-for INDEX in range(0, 1449):
+for INDEX in range(0, config["img_count"]):
     rgb = Image.open(os.path.join(DATA_DIR, "rgb", f"{INDEX}.png")).convert("RGB")
     rgb = np.array(rgb)
 

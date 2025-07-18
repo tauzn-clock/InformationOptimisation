@@ -1,3 +1,6 @@
+file_path: "/scratchdata/nyu_plane"
+img_count: 1449
+
 camera_params:
   fx: 518.8579
   fy: 518.8579
@@ -5,3 +8,12 @@ camera_params:
   cy: 253.7362
 depth_max : 10.0
 resolution : 0.001
+
+conf: 0.99
+inlier_th: 0.1
+max_plane: 8
+
+use_sam: True
+sam_conf: 0.99
+sam_inlier_th: 0.2
+sam_max_plane: 4  
