@@ -8,7 +8,7 @@
 TLDR: Given an depth image with known intrinsics, find an ordered list of planes that represents the most likely model by minimising model information.
 
 ---
-### Abstract
+### Theoretical Overview
 ---
 ### Docker
 
@@ -40,8 +40,28 @@ docker run
     info_opt
 ```
 ---
+### Build
 
-### Theoretical Overview
+#### Python
+
+```
+git clone https://github.com/tauzn-clock/InformationOptimisation
+pip3 install -r requirements.txt
+```
+
+#### C++
+
+```
+git clone https://github.com/tauzn-clock/InformationOptimisation
+cd InformationOptimisation/cpp
+chmod +x ./requirements.sh
+./requirements.sh
+mkdir build && cd build
+cmake ..
+make
+```
+
+The C++ implementation does not allow for image segmentation via SAM, so planes are found from the full depth image directly.
 
 ---
 
