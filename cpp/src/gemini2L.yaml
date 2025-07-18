@@ -1,9 +1,12 @@
 file_path: /scratchdata/test
+img_count: 1000
 camera_params:
   fx: 306.93469
   cx: 318.588
   fy: 306.890
   cy: 198.379
+depth_max : 10.0
+resolution : 0.001
 
 edge_detection_params:
   guassian_blur:
@@ -13,8 +16,6 @@ edge_detection_params:
     low_threshold: 100
     high_threshold: 400
 
-depth_max : 10.0
-resolution : 0.001
 conf: 0.99
 inlier_th: 0.1
-img_count: 1000
+max_plane: 10

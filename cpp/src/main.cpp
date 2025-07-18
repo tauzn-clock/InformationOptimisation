@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
         int W = depth.cols;
         std::vector<int> mask(H*W, 1);
 
-        int plane_cnt = information_optimisation(depth, config, 10, mask);
+        int plane_cnt = information_optimisation(depth, config, config["max_plane"].as<int>(), mask);
         std::cout << "Plane count: " << plane_cnt << std::endl;
 
         cv::Mat plane_mask = cv::Mat::zeros(depth.rows, depth.cols, CV_16UC1);
