@@ -84,12 +84,12 @@ The C++ implementation does not allow for image segmentation via SAM, so planes 
 
 #### Python
 
+From `python` directory, run:
 
-`python3 demo.py`
-`python3 video.py`
-
-C++ implementation is available in the `cpp` directory.
-
+```
+python3 demo.py ./nyu.yaml
+```
+The noise function can be changed at line 53 of `python/demo.py`.
 #### C++
 
 From `cpp/build` directory, run:
@@ -97,17 +97,24 @@ From `cpp/build` directory, run:
 ```
 ./main ../src/nyu.yaml
 ```
+The noise function can be changed at line 93 of `cpp/src/information_optimisation.cpp`.
 
 YAML Parameters:
 `file_path`: Path to data
+`img_count`: Number of images to process.
+
 `camera_params`: Camera parameters, includes focal lengths (fx, fy), principal point (cx, cy).
 `depth_max` : Maximum depth value (in meters).
 `resolution` : Depth image resolution (in meters)
+
 `conf`: Confidence level for plane fitting.
 `inlier_th`: Assumed Inlier threshold for plane fitting.
-`img_count`: Number of images to process.
+`max_plane`: Maximum number of models to test.
 
-Note: The noise function can be changed at line 93 of `cpp/src/information_optimisation.cpp`.
+`use_sam`: Use Segment Anything Model (SAM) for plane segmentation.
+`sam_conf`: Confidence level for plane fitting in each SAM region.
+`sam_inlier_th`: Assumed Inlier threshold for plane fitting in each SAM region.
+`sam_max_plane`: Maximum number of models to test in each SAM region.
 
 ---
 
