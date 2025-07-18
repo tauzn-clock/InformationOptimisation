@@ -100,7 +100,7 @@ From `cpp/build` directory, run:
 The noise function can be changed at line 93 of `cpp/src/information_optimisation.cpp`.
 
 YAML Parameters:
-`file_path`: Path to data
+`file_path`: Path to data.
 `img_count`: Number of images to process.
 
 `camera_params`: Camera parameters, includes focal lengths (fx, fy), principal point (cx, cy).
