@@ -6,7 +6,6 @@
 #include <yaml-cpp/yaml.h>
 #include <chrono>
 #include <random>
-#include "information_optimisation.h"
 
 using namespace std;
 

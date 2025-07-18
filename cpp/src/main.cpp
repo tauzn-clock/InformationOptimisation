@@ -4,7 +4,7 @@
 #include <vector>
 #include "visualisation.cpp"
 #include "get_rgb_regions.cpp"
-#include "information_optimisation.h"
+#include "information_optimisation.cpp"
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     
     YAML::Node config = YAML::LoadFile(argv[1]);
     
-    for(int i=0; i<1449; i++){
+    for(int i=0; i<config["img_count"].as<int>(); i++){
         std::string rgb_path = config["file_path"].as<std::string>() + "/rgb/" + std::to_string(i) + ".png";
         std::string depth_path = config["file_path"].as<std::string>() + "/depth/" + std::to_string(i) + ".png";
 

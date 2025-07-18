@@ -9,3 +9,4 @@ resolution : 0.001
 eps: 0.001
 conf: 0.99
 inlier_th: 0.1
+img_count: 1449

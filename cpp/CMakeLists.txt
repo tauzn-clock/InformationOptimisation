@@ -31,10 +31,11 @@ find_package(OpenCV REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 # Add the executable
-add_executable(main src/main.cpp src/information_optimisation.cpp)
+add_executable(main src/main.cpp)
 
 # Link OpenCV and yaml-cpp libraries to your project
 target_link_libraries(main ${OpenCV_LIBS} yaml-cpp )
 
 # Include OpenCV header files
 target_include_directories(main PRIVATE ${OpenCV_INCLUDE_DIRS})
+
