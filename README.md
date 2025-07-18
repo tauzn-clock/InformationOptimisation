@@ -8,7 +8,7 @@
 TLDR: Given an depth image with known intrinsics, find an ordered list of planes that represents the most likely model by minimising model information.
 
 ---
-### Theoretical Overview
+### Data Format
 ---
 ### Docker
 
@@ -67,12 +67,32 @@ The C++ implementation does not allow for image segmentation via SAM, so planes 
 
 ### Run
 
-The bulk of the code is written in Python.
+#### Python
+
 
 `python3 demo.py`
 `python3 video.py`
 
 C++ implementation is available in the `cpp` directory.
+
+#### C++
+
+From `cpp/build` directory, run:
+
+```
+./main ../src/nyu.yaml
+```
+
+YAML Parameters:
+`file_path`: Path to data
+`camera_params`: Camera parameters, includes focal lengths (fx, fy), principal point (cx, cy).
+`depth_max` : Maximum depth value (in meters).
+`resolution` : Depth image resolution (in meters)
+`conf`: Confidence level for plane fitting.
+`inlier_th`: Assumed Inlier threshold for plane fitting.
+`img_count`: Number of images to process.
+
+Note: The noise function can be changed at line 93 of `cpp/src/information_optimisation.cpp`.
 
 ---
 

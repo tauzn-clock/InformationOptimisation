@@ -52,7 +52,7 @@ int information_optimisation(cv::Mat depth, YAML::Node config, int max_plane, ve
     float resolution = config["resolution"].as<float>();
 
     float R = config["depth_max"].as<float>();
-    float eps = config["eps"].as<float>();
+    float eps = resolution;
     float STATES = log(R/eps);
 
     float conf = config["conf"].as<float>();
