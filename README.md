@@ -30,28 +30,28 @@ Get the NYU dataset and all predicted planes from [here](https://drive.google.co
 Build the docker image using the following command:
 
 ```
-docker build 
-    --ssh default=$SSH_AUTH_SOCK 
+docker build \
+    --ssh default=$SSH_AUTH_SOCK \
     -t info_opt .
 ```
 
 Run the docker image using the following command:
 
 ```
-docker run  
-    -it 
-    -v <path_of_scratchdata>:/scratchdata 
-    --gpus all 
-    --shm-size 16g  
-    -d  
-    --network=host  
-    --restart unless-stopped  
-    --env="DISPLAY"  
-    --env="QT_X11_NO_MITSHM=1"  
-    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw"   
-    --device=/dev/ttyUSB0  
-    -e DISPLAY=unix$DISPLAY  
-    --privileged 
+docker run \
+    -it \
+    -v <path_of_scratchdata>:/scratchdata \
+    --gpus all \
+    --shm-size 16g \ 
+    -d \
+    --network=host \
+    --restart unless-stopped \
+    --env="DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
+    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    --device=/dev/ttyUSB0 \
+    -e DISPLAY=unix$DISPLAY \ 
+    --privileged \
     info_opt
 ```
 ---
