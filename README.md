@@ -2,6 +2,7 @@
   
 <h2> Plane detection and ranking via model information optimisation </h2>
 <p>Daoxin Zhong, Jun Li, Michael Chuah</p>
+<p><a href="https://arxiv.org/abs/2508.09625">[arXiv]</a></p>
 
 </div>
 
