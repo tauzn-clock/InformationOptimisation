@@ -123,11 +123,12 @@ YAML Parameters:
 
 ```
 @inproceedings{zhong2025infoopt,
-  doi = {10.48550/ARXIV.2508.09625},
-  url = {https://arxiv.org/abs/2508.09625},
   author = {Zhong,  Daoxin and Li,  Jun and Chuah,  Meng Yee Michael},
   title = {Plane Detection and Ranking via Model Information Optimization},
   booktitle = {Proceedings of the IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
   publisher = {IEEE},
+  year = {2025},
+  doi = {10.48550/ARXIV.2508.09625},
+  url = {https://arxiv.org/abs/2508.09625},
 }
 ```
